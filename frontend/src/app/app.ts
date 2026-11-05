@@ -1,7 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { CommonModule } from '@angular/common';
 
 interface Libro {
   id?: number;
@@ -14,16 +13,16 @@ interface Libro {
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [FormsModule, CommonModule],
+  imports: [FormsModule],
   templateUrl: './app.html',
 })
 export class App implements OnInit {
-  libros: Libro[] = [];
-  libro: Libro = { title: '', author: '', year: null, gender: '' };
-  mensaje = '';
-  error = false;
+  libros = signal<Libro[]>([]);
+  mensaje = signal('');
+  error = signal(false);
 
-  // Ruta relativa: Nginx la redirige a http://api:8000
+  libro: Libro = { title: '', author: '', year: null, gender: '' };
+
   private apiUrl = '/api/books';
 
   constructor(private http: HttpClient) {}
@@ -34,7 +33,7 @@ export class App implements OnInit {
 
   cargar() {
     this.http.get<Libro[]>(this.apiUrl).subscribe({
-      next: (data) => (this.libros = data),
+      next: (data) => this.libros.set(data),
       error: () => this.mostrar('No se pudo cargar la lista', true),
     });
   }
@@ -51,7 +50,7 @@ export class App implements OnInit {
   }
 
   private mostrar(msg: string, esError: boolean) {
-    this.mensaje = msg;
-    this.error = esError;
+    this.mensaje.set(msg);
+    this.error.set(esError);
   }
 }

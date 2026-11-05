@@ -38,8 +38,8 @@
         Registrar libro
       </button>
 
-      @if (mensaje) {
-        <p class="text-center text-sm" [class]="error ? 'text-red-600' : 'text-green-600'">{{ mensaje }}</p>
+      @if (mensaje()) {
+        <p class="text-center text-sm" [class]="error() ? 'text-red-600' : 'text-green-600'">{{ mensaje() }}</p>
       }
     </form>
 
@@ -47,12 +47,12 @@
     <section class="bg-white rounded-xl shadow p-6">
       <h2 class="text-xl font-semibold text-slate-800 mb-4">Libros registrados</h2>
 
-      @if (libros.length === 0) {
+      @if (libros().length === 0) {
         <p class="text-slate-400 text-center py-4">Aún no hay libros.</p>
       }
 
       <ul class="divide-y divide-slate-200">
-        @for (l of libros; track l.id) {
+        @for (l of libros(); track l.id) {
           <li class="py-3 flex justify-between items-center">
             <div>
               <p class="font-medium text-slate-800">{{ l.title }}</p>
