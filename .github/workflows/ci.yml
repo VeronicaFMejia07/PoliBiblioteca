@@ -1,0 +1,31 @@
+name: Integración Pipeline CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Crear .env desde el ejemplo (tomando la plantilla .env.example)
+        run: cp .env.example .env
+
+      - name: Construir imágenes (frontend y backend)
+        run: docker compose build
+
+      - name: Levantar servicios
+        run: docker compose up -d --wait
+
+      - name: Prueba de ida y vuelta (guardar y leer)
+        run: |
+          curl -f -X POST http://localhost:8080/api/books \
+            -H "Content-Type: application/json" \
+            -d '{"title":"CI","author":"Bot CI","year":2026,"gender":"Prueba Bot"}'
+          curl -f http://localhost:8080/api/books | grep CI
+
+      - name: Bajar servicios
+        if: always()
+        run: docker compose down -v
