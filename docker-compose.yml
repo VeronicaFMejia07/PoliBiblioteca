@@ -1,0 +1,31 @@
+services:
+  api:
+    build: ./backend/api
+    image: poli-biblioteca-api:1.0.0
+    env_file: .env
+    volumes:
+      - api-data:/data
+    networks:
+      - app-net
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  frontend:
+    build: ./frontend
+    image: poli-biblioteca-frontend:1.0.0
+    ports:
+      - "8080:80"
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - app-net
+
+networks:
+  app-net:
+
+volumes:
+  api-data:
