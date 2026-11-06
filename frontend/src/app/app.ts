@@ -9,7 +9,7 @@ interface Libro {
   year?: number | null;
   gender?: string;
 }
-,
+
 @Component({
   selector: 'app-root',
   standalone: true,
