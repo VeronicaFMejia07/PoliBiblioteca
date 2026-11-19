@@ -31,11 +31,17 @@ pipeline {
                     set -e
                     docker compose up -d --wait
 
-                    echo "--- Monitoreo de la API por nombre de servicio ---"
+                    echo "--- 1. Monitoreo de la API (frontend -> api por nombre de servicio) ---"
                     docker compose exec -T frontend wget -qO- http://api:8000/api/health
 
-                    echo "--- Leer libros ---"
-                    docker compose exec -T frontend wget -qO- http://api:8000/api/books
+                    echo "--- 2. Guardar un libro ---"
+                    docker compose exec -T frontend wget -qO- \
+                      --header='Content-Type: application/json' \
+                      --post-data='{"title":"Libro CI","author":"Jenkins","year":2026,"gender":"Pruebas"}' \
+                      http://api:8000/api/books
+
+                    echo "--- 3. Leer y verificar que el libro quedó guardado ---"
+                    docker compose exec -T frontend wget -qO- http://api:8000/api/books | grep "Libro CI"
                 '''
             }
         }
