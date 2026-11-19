@@ -41,7 +41,7 @@ pipeline {
                       http://api:8000/api/books
 
                     echo "--- 3. Leer y verificar que el libro quedó guardado ---"
-                    docker compose exec -T frontend wget -qO- http://api:8000/api/books | grep "Libro 404"
+                    docker compose exec -T frontend wget -qO- http://api:8000/api/books | grep "Libro CI"
                 '''
             }
         }
